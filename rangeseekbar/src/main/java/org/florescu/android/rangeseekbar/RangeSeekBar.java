@@ -593,9 +593,7 @@ public class RangeSeekBar<T extends Number> extends ImageView {
             width = MeasureSpec.getSize(widthMeasureSpec);
         }
 
-        int height = thumbImage.getHeight()
-                + (!showTextAboveThumbs ? 0 : PixelUtil.dpToPx(getContext(), HEIGHT_IN_DP))
-                + (thumbShadow ? thumbShadowYOffset + thumbShadowBlur : 0);
+        int height = thumbImage.getHeight();
         if (MeasureSpec.UNSPECIFIED != MeasureSpec.getMode(heightMeasureSpec)) {
             height = Math.min(height, MeasureSpec.getSize(heightMeasureSpec));
         }
@@ -629,7 +627,7 @@ public class RangeSeekBar<T extends Number> extends ImageView {
         // draw seek bar background line
         rect.left = padding;
         rect.right = getWidth() - padding;
-        canvas.drawRect(rect, paint);
+//        canvas.drawRect(rect, paint);
 
         boolean selectedValuesAreDefault = (normalizedMinValue <= minDeltaForDefault && normalizedMaxValue >= 1 - minDeltaForDefault);
 
@@ -642,20 +640,31 @@ public class RangeSeekBar<T extends Number> extends ImageView {
         rect.right = normalizedToScreen(normalizedMaxValue);
 
         paint.setColor(colorToUseForButtonsAndHighlightedLine);
-        canvas.drawRect(rect, paint);
+//        canvas.drawRect(rect, paint);
 
         // draw minimum thumb (& shadow if requested) if not a single thumb control
         if (!singleThumb) {
             if (thumbShadow) {
-                drawThumbShadow(normalizedToScreen(normalizedMinValue), canvas);
+//                drawThumbShadow(normalizedToScreen(normalizedMinValue), canvas);
+                Path shadePath = new Path();
+                shadePath.addRect(0,0,normalizedToScreen(normalizedMinValue),getHeight(), Path.Direction.CCW);
+                canvas.drawPath(shadePath,shadowPaint);
             }
+//            setLayerType(LAYER_TYPE_SOFTWARE, null);
+//            shadowPaint.setColor(Color.argb(75, 0, 0, 0));
+//            shadowPaint.setMaskFilter(new BlurMaskFilter(thumbShadowBlur, BlurMaskFilter.Blur.NORMAL));
+
+
             drawThumb(normalizedToScreen(normalizedMinValue), Thumb.MIN.equals(pressedThumb), canvas,
                     selectedValuesAreDefault);
         }
 
         // draw maximum thumb & shadow (if necessary)
         if (thumbShadow) {
-            drawThumbShadow(normalizedToScreen(normalizedMaxValue), canvas);
+//            drawThumbShadow(normalizedToScreen(normalizedMaxValue), canvas);
+            Path shadePathRight = new Path();
+            shadePathRight.addRect(normalizedToScreen(normalizedMaxValue),0,getWidth(),getHeight(), Path.Direction.CCW);
+            canvas.drawPath(shadePathRight,shadowPaint);
         }
         drawThumb(normalizedToScreen(normalizedMaxValue), Thumb.MAX.equals(pressedThumb), canvas,
                 selectedValuesAreDefault);
