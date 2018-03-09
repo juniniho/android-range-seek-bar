@@ -623,6 +623,8 @@ public class RangeSeekBar<T extends Number> extends ImageView {
             canvas.drawText(maxLabel, getWidth() - minMaxLabelSize, minMaxHeight, paint);
         }
         padding = internalPad + minMaxLabelSize + thumbHalfWidth;
+        //去掉两边的padding，让滑块居边
+        padding = thumbHalfWidth;
 
         // draw seek bar background line
         rect.left = padding;
