@@ -12,7 +12,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         minSdkVersion 15
@@ -45,3 +45,44 @@ dependencies {
 }
 
 apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
+
+
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.artifactory'
+def artifactVersion = '0.3.1'
+publishing {
+    publications {
+        mavenArr(MavenPublication) {
+            groupId = 'common'
+            artifactId project.name
+            version = artifactVersion
+            artifact "${project.buildDir}/outputs/aar/${project.name}-release.aar"
+
+            pom.withXml {
+                def dependencies = asNode().appendNode('dependencies')
+                configurations.implementation.allDependencies.each{
+                    if(it.group != null) {
+                        def dependency = dependencies.appendNode('dependency')
+                        dependency.appendNode('groupId', it.group)
+                        dependency.appendNode('artifactId', it.name)
+                        dependency.appendNode('version', it.version)
+                    }
+                }
+            }
+
+        }
+    }
+    artifactory {
+        contextUrl = "http://192.168.14.152:8081/artifactory"
+        publish {
+            repository {
+                repoKey = 'release_lib'
+                username = System.getenv("ArtifactoryUser")
+                password = System.getenv("ArtifactoryPwd")
+            }
+            defaults {
+                publications('mavenArr')
+            }
+        }
+    }
+}
