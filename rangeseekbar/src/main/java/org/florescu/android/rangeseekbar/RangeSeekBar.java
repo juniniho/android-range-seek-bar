@@ -34,6 +34,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -58,7 +59,7 @@ import java.math.BigDecimal;
  * @author Alex Florescu (alex@florescu.org)
  * @author Michael Keppler (bananeweizen@gmx.de)
  */
-public class RangeSeekBar<T extends Number> extends ImageView {
+public class RangeSeekBar<T extends Number> extends AppCompatImageView {
     /**
      * Default color of a {@link RangeSeekBar}, #FF33B5E5. This is also known as "Ice Cream Sandwich" blue.
      */
@@ -134,6 +135,8 @@ public class RangeSeekBar<T extends Number> extends ImageView {
     private Path thumbShadowPath;
     private Path translatedThumbShadowPath = new Path();
     private Matrix thumbShadowMatrix = new Matrix();
+    private Path shadePath = new Path();
+    private Path shadePathRight = new Path();
 
     private boolean activateOnDefaultValues;
 
@@ -648,7 +651,7 @@ public class RangeSeekBar<T extends Number> extends ImageView {
         if (!singleThumb) {
             if (thumbShadow) {
 //                drawThumbShadow(normalizedToScreen(normalizedMinValue), canvas);
-                Path shadePath = new Path();
+                shadePath.reset();
                 shadePath.addRect(0,0,normalizedToScreen(normalizedMinValue),getHeight(), Path.Direction.CCW);
                 canvas.drawPath(shadePath,shadowPaint);
             }
@@ -664,7 +667,7 @@ public class RangeSeekBar<T extends Number> extends ImageView {
         // draw maximum thumb & shadow (if necessary)
         if (thumbShadow) {
 //            drawThumbShadow(normalizedToScreen(normalizedMaxValue), canvas);
-            Path shadePathRight = new Path();
+            shadePathRight.reset();
             shadePathRight.addRect(normalizedToScreen(normalizedMaxValue),0,getWidth(),getHeight(), Path.Direction.CCW);
             canvas.drawPath(shadePathRight,shadowPaint);
         }
